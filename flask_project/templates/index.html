@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Appliance Manager</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            margin: 20px;
+            color: #555;
+        }
+
+        .appliance-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .appliance-card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .appliance-card:hover {
+            transform: scale(1.05);
+        }
+
+	.appliance-card.running-background {
+        background-color: #d4edda; /* 浅绿色背景 */
+    }
+
+        .appliance-image-container {
+            position: relative;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            height: 120px;
+            background-color: #f9f9f9;
+            overflow: hidden;
+        }
+
+        .appliance-image-container img {
+            max-height: 100%;
+            width: 100%;
+        }
+
+        .switch-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .switch-btn.running {
+            background-color: #4caf50;
+        }
+
+        .switch-btn img {
+            width: 30px;
+            height: 30px;
+	    border-radius:50%;
+        }
+
+        .appliance-details {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .appliance-details div {
+            padding: 5px 0;
+            border-top: 1px solid #ddd;
+        }
+
+        .appliance-details div:first-child {
+            border-top: none;
+        }
+
+        .priority-container {
+            background-color: white;
+            border-radius: 10px;
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .priority-container h3 {
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .priority-container p {
+            text-align: left;
+            margin: 5px 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Smart Home Appliance Manager</h1>
+    <div class="appliance-container" id="appliances"></div>
+    <div class="priority-container" id="priorities">
+        <h3>Appliance Priorities</h3>
+        <p>Loading priorities...</p>
+    </div>
+
+    <script>
+        const appliances = [
+            { name: "Washing Machine", image: "washing_machine.png" },
+            { name: "Refrigerator", image: "refrigerator.png" },
+            { name: "Oven", image: "oven.png" },
+            { name: "Air Conditioner", image: "air_conditioner.png" },
+            { name: "Heater", image: "heater.png" },
+            { name: "Dishwasher", image: "dishwasher.png" }
+        ];
+
+        const renderAppliances = async () => {
+    const statusResponse = await axios.get("/get-status"); // 获取设备状态
+    const priorityResponse = await axios.get("/get-priority"); // 获取优先级
+    const applianceData = statusResponse.data;
+    const priorityData = priorityResponse.data;
+
+    const container = document.getElementById("appliances");
+    container.innerHTML = "";
+
+    // 将优先级映射为排序值
+    const priorityOrder = { "High": 1, "Medium": 2, "Low": 3 };
+
+    // 将设备按照优先级排序
+    const sortedAppliances = appliances.sort((a, b) => {
+        const priorityA = priorityData.find(item => item.appliance === a.name)?.priority || "Low";
+        const priorityB = priorityData.find(item => item.appliance === b.name)?.priority || "Low";
+
+        return priorityOrder[priorityA] - priorityOrder[priorityB];
+    });
+
+    // 渲染排序后的设备
+    sortedAppliances.forEach(appliance => {
+        const data = applianceData[appliance.name];
+
+        // 获取当前设备的优先级
+        const priorityItem = priorityData.find(item => item.appliance === appliance.name);
+        const priority = priorityItem ? priorityItem.priority : "N/A";
+
+        const isRunning = data.start_time !== null;
+
+        const card = document.createElement("div");
+        card.className = `appliance-card ${isRunning ? "running-background" : ""}`;
+
+        card.innerHTML = `
+            <div class="appliance-image-container">
+                <img src="static/images/${appliance.image}" alt="${appliance.name}">
+                <button class="switch-btn ${isRunning ? "running" : ""}" onclick="toggleAppliance('${appliance.name}', this)">
+                    <img src="static/icons/power_${isRunning ? "on" : "off"}.png" alt="Power">
+                </button>
+            </div>
+            <div class="appliance-details">
+                <div>Current Usage: ${data.current_usage.toFixed(2)} mins</div>
+                <div>Total Usage: ${data.usage.toFixed(2)} mins</div>
+                <div>Usage Count: ${data.usage_count}</div>
+                <div>Priority: ${priority}</div>
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+};
+
+
+        const renderPriorities = async () => {
+    const response = await axios.get("/get-priority"); // 获取优先级数据
+    const priorityData = response.data;
+
+    const container = document.getElementById("priorities");
+    container.innerHTML = "<h3>Appliance Priorities</h3>";
+
+    // 定义优先级的排序规则
+    const priorityOrder = { "High": 1, "Medium": 2, "Low": 3 };
+
+    // 对优先级数据进行排序
+    const sortedPriorities = priorityData.sort((a, b) => {
+        return priorityOrder[a.priority] - priorityOrder[b.priority];
+    });
+
+    // 渲染排序后的优先级数据
+    sortedPriorities.forEach(item => {
+        container.innerHTML += `<p>${item.appliance}: <strong>${item.priority}</strong></p>`;
+    });
+};
+
+
+        const toggleAppliance = async (appliance, button) => {
+    const isRunning = button.classList.contains("running");
+    const card = button.closest(".appliance-card"); // 获取按钮所在的盒子
+
+    if (isRunning) {
+        // 停止设备
+        await axios.post("/stop", { appliance });
+        card.classList.remove("running-background"); // 移除绿色背景
+    } else {
+        // 启动设备
+        await axios.post("/start", { appliance });
+        card.classList.add("running-background"); // 添加绿色背景
+    }
+
+    // 更新设备状态和优先级
+    renderAppliances();
+    renderPriorities();
+};
+
+
+        // 初始渲染
+        renderAppliances();
+        renderPriorities();
+
+        // 定时刷新设备状态
+        setInterval(renderAppliances, 5000); // 每 5 秒刷新一次设备状态
+    </script>
+</body>
+</html>
