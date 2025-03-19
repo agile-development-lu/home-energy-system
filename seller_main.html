@@ -9,40 +9,40 @@
 </head>
 <body class="bg-light">
 <div class="container my-4">
-  <h2>卖家界面</h2>
-  <a href="/logout" class="btn btn-danger float-end">退出登录</a>
+  <h2>Seller page</h2>
+  <a href="/logout" class="btn btn-danger float-end">Log out</a>
   <hr/>
 
   <div class="card mb-3">
-    <div class="card-header">创建拍卖</div>
+    <div class="card-header">Create an auction</div>
     <div class="card-body">
       <div class="mb-3">
-        <label>电量 (kWh)</label>
+        <label>Quantity (kWh)</label>
         <input type="number" step="1" id="quantity" class="form-control" value="10"/>
       </div>
       <div class="mb-3">
-        <label>电网价 (¥/kWh)</label>
+        <label>Grid price (¥/kWh)</label>
         <input type="number" step="0.01" id="gridPrice" class="form-control" value="0.3"/>
       </div>
       <div class="mb-3">
-        <label>起始价 (¥/kWh)</label>
+        <label>Start price (¥/kWh)</label>
         <input type="number" step="0.01" id="startPrice" class="form-control" value="0.2"/>
       </div>
       <div class="mb-3">
-        <label>总时长(秒)</label>
+        <label>Total duration (secs)</label>
         <input type="number" id="totalDuration" class="form-control" value="600"/>
       </div>
       <div class="mb-3">
-        <label>延长时长(秒)</label>
+        <label>Extension duration (secs)</label>
         <input type="number" id="extensionDuration" class="form-control" value="300"/>
       </div>
-      <button id="createBtn" class="btn btn-success">创建拍卖</button>
+      <button id="createBtn" class="btn btn-success">Create an auction</button>
       <div id="createMsg" class="text-info mt-2"></div>
     </div>
   </div>
 
-  <h4>我创建的拍卖</h4>
-  <button id="refreshBtn" class="btn btn-secondary btn-sm mb-2">刷新</button>
+  <h4>My auctions</h4>
+  <button id="refreshBtn" class="btn btn-secondary btn-sm mb-2">Refresh</button>
   <div id="myAuctions" class="row"></div>
 </div>
 
@@ -78,14 +78,14 @@ createBtn.addEventListener("click", async ()=>{
     }
     let data = await resp.json();
     if(data.status==="success"){
-      createMsg.textContent = "拍卖创建成功: "+data.auction_id;
+      createMsg.textContent = "Auction created: "+data.auction_id;
       loadMyAuctions();
     } else {
-      createMsg.textContent = "创建失败: "+data.msg;
+      createMsg.textContent = "Failed to create the auction: "+data.msg;
     }
   }catch(err){
     console.error(err);
-    createMsg.textContent = "创建失败: "+err.message;
+    createMsg.textContent = "Failed to create the auction: "+err.message;
   }
 });
 
@@ -113,17 +113,17 @@ function renderMyAuctions(auctions){
   myAuctionsDiv.innerHTML = "";
   auctions.forEach(a => {
     let st = a.status==='ongoing'
-      ? `<span style="color:green">进行中</span>`
-      : `<span style="color:red">已结束</span>`;
+      ? `<span style="color:green">Ongoing</span>`
+      : `<span style="color:red">Ended</span>`;
     let card = `
       <div class="col-md-4 mb-2">
         <div class="card ${a.status==='ongoing'?'border-success':'border-secondary'}">
           <div class="card-body">
-            <h5 class="card-title">拍卖 #${a.auction_id}</h5>
+            <h5 class="card-title">Auction #${a.auction_id}</h5>
             <p class="card-text">
-              电量: ${a.quantity} kWh <br>
-              最高价: ¥${a.highest_bid.toFixed(2)}<br>
-              状态: ${st}
+              Quantity: ${a.quantity} kWh <br>
+              Highest bid: ¥${a.highest_bid.toFixed(2)}<br>
+              Status: ${st}
             </p>
           </div>
         </div>

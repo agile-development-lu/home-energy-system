@@ -9,8 +9,8 @@
 </head>
 <body class="bg-light">
 <div class="container my-4">
-  <h2>买家拍卖列表</h2>
-  <a href="/logout" class="btn btn-danger float-end mb-3">退出登录</a>
+  <h2>Buyer's Auction Listings</h2>
+  <a href="/logout" class="btn btn-danger float-end mb-3">Log out</a>
   <div id="auctionList" class="row"></div>
 </div>
 
@@ -19,7 +19,7 @@
 function formatDuration(seconds) {
   const mins = Math.floor(seconds/60);
   const secs = seconds % 60;
-  return `${mins}分${secs.toString().padStart(2,'0')}秒`;
+  return `${mins}mins${secs.toString().padStart(2,'0')}secs`;
 }
 
 const auctionListDiv = document.getElementById('auctionList');
@@ -33,30 +33,30 @@ function renderAuctions(auctions) {
     let timeInfo = '';
     if (a.status === 'ongoing') {
       const leftSec = Math.round(a.time_left||0);
-      timeInfo = `剩余时间: ${formatDuration(leftSec)}`;
+      timeInfo = `Time left: ${formatDuration(leftSec)}`;
     } else {
-      timeInfo = '拍卖已结束';
+      timeInfo = 'Auction ended';
     }
 
     const cardHTML = `
       <div class="col-md-4 mb-3" id="${cardId}">
         <div class="card ${a.status==='ongoing'?'border-success':'border-secondary'}">
           <div class="card-body">
-            <h5 class="card-title">拍卖 #${a.auction_id}</h5>
+            <h5 class="card-title">Auction #${a.auction_id}</h5>
             <p class="card-text">
-              电量: <b>${a.quantity} kWh</b><br>
-              最高价: ¥${a.highest_bid.toFixed(2)}<br>
-              状态: ${a.status==='ongoing'
-                ? '<span style="color:green">进行中</span>'
-                : '<span style="color:red">已结束</span>'}
+              quantity: <b>${a.quantity} kWh</b><br>
+              Highest bid: ¥${a.highest_bid.toFixed(2)}<br>
+              Status: ${a.status==='ongoing'
+                ? '<span style="color:green">Ongoing</span>'
+                : '<span style="color:red">Ended</span>'}
               <br>
               ${timeInfo}
             </p>
             ${
               a.status==='ongoing'
               ? `<a href="/buyer_detail.html?auction_id=${a.auction_id}"
-                 class="btn btn-sm btn-primary">出价</a>`
-              : `<button class="btn btn-sm btn-secondary" disabled>已结束</button>`
+                 class="btn btn-sm btn-primary">Submit bid</a>`
+              : `<button class="btn btn-sm btn-secondary" disabled>Ended</button>`
             }
           </div>
         </div>

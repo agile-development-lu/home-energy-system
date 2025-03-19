@@ -12,20 +12,20 @@
   <h1>Energy Auction Platform</h1>
   <hr/>
   {% if session.user %}
-    <!-- 已登录 -->
-    <p>欢迎你, <strong>{{ session.user }}</strong>!</p>
+    <!-- Logged in -->
+    <p>Welcome, <strong>{{ session.user }}</strong>!</p>
     <p>
-      <a href="/buyer_main.html" class="btn btn-success btn-lg me-3">我是买家</a>
-      <a href="/seller_main.html" class="btn btn-warning btn-lg">我是卖家</a>
+      <a href="/buyer_main.html" class="btn btn-success btn-lg me-3">I'm a buyer</a>
+      <a href="/seller_main.html" class="btn btn-warning btn-lg">I'm a seller</a>
     </p>
     <p>
-      <a href="/logout" class="btn btn-danger">退出登录</a>
+      <a href="/logout" class="btn btn-danger">Log out</a>
     </p>
   {% else %}
-    <!-- 未登录 -->
-    <p>你还未登录，请选择:</p>
-    <a href="/login" class="btn btn-primary btn-lg me-3">登录</a>
-    <a href="/register" class="btn btn-secondary btn-lg">注册</a>
+    <!-- Not logged in -->
+    <p>You are not logged in, please select:</p>
+    <a href="/login" class="btn btn-primary btn-lg me-3">Login</a>
+    <a href="/register" class="btn btn-secondary btn-lg">Register</a>
   {% endif %}
 </div>
 </body>
