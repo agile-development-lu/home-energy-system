@@ -9,40 +9,40 @@
 </head>
 <body class="bg-light">
 <div class="container my-4">
-  <h2>卖家界面</h2>
-  <a href="/logout" class="btn btn-danger float-end">退出登录</a>
+  <h2>Seller Interface</h2>
+  <a href="/logout" class="btn btn-danger float-end">Log out</a>
   <hr/>
 
   <div class="card mb-3">
-    <div class="card-header">创建拍卖</div>
+    <div class="card-header">Create Auction</div>
     <div class="card-body">
       <div class="mb-3">
-        <label>电量 (kWh)</label>
+        <label>Electricity (kWh)</label>
         <input type="number" step="1" id="quantity" class="form-control" value="10"/>
       </div>
       <div class="mb-3">
-        <label>电网价 (¥/kWh)</label>
+        <label>Price (¥/kWh)</label>
         <input type="number" step="0.01" id="gridPrice" class="form-control" value="0.3"/>
       </div>
       <div class="mb-3">
-        <label>起始价 (¥/kWh)</label>
+        <label>Start Price (¥/kWh)</label>
         <input type="number" step="0.01" id="startPrice" class="form-control" value="0.2"/>
       </div>
       <div class="mb-3">
-        <label>总时长(秒)</label>
+        <label>Time Length(seconds)</label>
         <input type="number" id="totalDuration" class="form-control" value="600"/>
       </div>
       <div class="mb-3">
-        <label>延长时长(秒)</label>
+        <label>Delay Time Length(seconds)</label>
         <input type="number" id="extensionDuration" class="form-control" value="300"/>
       </div>
-      <button id="createBtn" class="btn btn-success">创建拍卖</button>
+      <button id="createBtn" class="btn btn-success">Create Auction</button>
       <div id="createMsg" class="text-info mt-2"></div>
     </div>
   </div>
 
-  <h4>我创建的拍卖</h4>
-  <button id="refreshBtn" class="btn btn-secondary btn-sm mb-2">刷新</button>
+  <h4>My Order</h4>
+  <button id="refreshBtn" class="btn btn-secondary btn-sm mb-2">Refresh</button>
   <div id="myAuctions" class="row"></div>
 </div>
 

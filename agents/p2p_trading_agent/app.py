@@ -89,10 +89,10 @@ class EnglishAuction:
 
     def _finalize_auction(self):
         if self.highest_bid >= self.grid.grid_price and self.highest_bidder:
-            print(f"[Auction {self.auction_id}] Ended. Winner={self.highest_bidder}, Price={self.highest_bid}")
+            print(f"[P2PTradeAgent {self.auction_id}] Ended. Winner={self.highest_bidder}, Price={self.highest_bid}")
         else:
             cost = self.grid.buy_energy(self.quantity)
-            print(f"[Auction {self.auction_id}] Ended. Sold to Grid => cost={cost:.2f}")
+            print(f"[P2PTradeAgent {self.auction_id}] Ended. Sold to Grid => cost={cost:.2f}")
 
     def get_status(self):
         st = "ended" if self.auction_ended or self.canceled else "ongoing"
@@ -140,7 +140,7 @@ class AuctionManager:
         )
         self.auctions[auction_id] = auc
         self.auction_seller_map[auction_id] = seller_id
-        print(f"[Manager] Created Auction {auction_id} by Seller {seller_id}, start_price={start_price}")
+        print(f"[P2PTradeAgent] Created Auction {auction_id} by Seller {seller_id}, start_price={start_price}")
         return auction_id
 
     def get_auction(self, auction_id):
@@ -181,7 +181,7 @@ class AuctionManager:
 # ========== 2. 全局实例和初始化 ==========
 
 manager = AuctionManager()
-app = Flask(__name__)
+app = Flask(__name__,template_folder="templates")
 app.config["SECRET_KEY"] = "secret!123"
 socketio = SocketIO(app, async_mode="eventlet")
 
@@ -347,5 +347,6 @@ socketio.start_background_task(background_monitor)
 
 
 # ========== 8. 启动入口 ==========
-if __name__ == "__main__":
-    socketio.run(app, debug=True, host="0.0.0.0", port=5000)
+def run_p2p_agent_app():
+    # Enable threaded mode to allow multiple concurrent requests if needed.
+    app.run(threaded=True, port=5001)

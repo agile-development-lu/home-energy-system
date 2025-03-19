@@ -1,2 +1,5 @@
 *.pyc
 agents/__pycache__/data_collection_agent.cpython-310.pyc
+flask_project/__pycache__
+flask_project/__pycache__
+.DS_Store

@@ -1,8 +1,8 @@
 from flask import Flask, jsonify, render_template, request
-from agent import BehavioralSegmentationAgent
+from agents.energy_manage_agent.agent import BehavioralSegmentationAgent
 import time
 
-app = Flask(__name__)
+app = Flask(__name__,template_folder="templates")
 
 # 模拟设备数据（包含使用次数和总使用时长）
 appliance_data = {
@@ -76,8 +76,8 @@ def get_status():
             appliance_data[appliance]["current_usage"] = 0
     return jsonify(appliance_data)
 
-
-if __name__ == "__main__":
-    app.run(debug=True)
+def run_ems_app():
+    # Enable threaded mode to allow multiple concurrent requests if needed.
+    app.run(threaded=True, port=5000)
 
 
