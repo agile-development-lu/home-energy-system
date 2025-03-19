@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Seller Main</title>
+  <link 
+    rel="stylesheet" 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+<div class="container my-4">
+  <h2>卖家界面</h2>
+  <a href="/logout" class="btn btn-danger float-end">退出登录</a>
+  <hr/>
+
+  <div class="card mb-3">
+    <div class="card-header">创建拍卖</div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label>电量 (kWh)</label>
+        <input type="number" step="1" id="quantity" class="form-control" value="10"/>
+      </div>
+      <div class="mb-3">
+        <label>电网价 (¥/kWh)</label>
+        <input type="number" step="0.01" id="gridPrice" class="form-control" value="0.3"/>
+      </div>
+      <div class="mb-3">
+        <label>起始价 (¥/kWh)</label>
+        <input type="number" step="0.01" id="startPrice" class="form-control" value="0.2"/>
+      </div>
+      <div class="mb-3">
+        <label>总时长(秒)</label>
+        <input type="number" id="totalDuration" class="form-control" value="600"/>
+      </div>
+      <div class="mb-3">
+        <label>延长时长(秒)</label>
+        <input type="number" id="extensionDuration" class="form-control" value="300"/>
+      </div>
+      <button id="createBtn" class="btn btn-success">创建拍卖</button>
+      <div id="createMsg" class="text-info mt-2"></div>
+    </div>
+  </div>
+
+  <h4>我创建的拍卖</h4>
+  <button id="refreshBtn" class="btn btn-secondary btn-sm mb-2">刷新</button>
+  <div id="myAuctions" class="row"></div>
+</div>
+
+<script>
+const createBtn = document.getElementById("createBtn");
+const createMsg = document.getElementById("createMsg");
+const refreshBtn = document.getElementById("refreshBtn");
+const myAuctionsDiv = document.getElementById("myAuctions");
+
+createBtn.addEventListener("click", async ()=>{
+  const qty = parseFloat(document.getElementById("quantity").value);
+  const gridP = parseFloat(document.getElementById("gridPrice").value);
+  const startP = parseFloat(document.getElementById("startPrice").value);
+  const totalDur = parseInt(document.getElementById("totalDuration").value);
+  const extDur = parseInt(document.getElementById("extensionDuration").value);
+
+  try{
+    let resp = await fetch("/api/create_auction", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        quantity: qty,
+        grid_price: gridP,
+        start_price: startP,
+        total_duration: totalDur,
+        extension_duration: extDur
+      })
+    });
+    // 先解析JSON
+    if(!resp.ok){
+      let text = await resp.text();
+      throw new Error("HTTP "+resp.status+" => "+text);
+    }
+    let data = await resp.json();
+    if(data.status==="success"){
+      createMsg.textContent = "拍卖创建成功: "+data.auction_id;
+      loadMyAuctions();
+    } else {
+      createMsg.textContent = "创建失败: "+data.msg;
+    }
+  }catch(err){
+    console.error(err);
+    createMsg.textContent = "创建失败: "+err.message;
+  }
+});
+
+refreshBtn.addEventListener("click", ()=>{
+  loadMyAuctions();
+});
+
+function loadMyAuctions(){
+  fetch("/api/list_seller_auctions")
+    .then(res => res.json())
+    .then(data => {
+      console.log("[Seller] list_seller_auctions =>", data);
+      if(data.status==="fail"){
+        myAuctionsDiv.innerHTML = `<div class="alert alert-danger">${data.msg}</div>`;
+      } else {
+        renderMyAuctions(data);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+    });
+}
+
+function renderMyAuctions(auctions){
+  myAuctionsDiv.innerHTML = "";
+  auctions.forEach(a => {
+    let st = a.status==='ongoing'
+      ? `<span style="color:green">进行中</span>`
+      : `<span style="color:red">已结束</span>`;
+    let card = `
+      <div class="col-md-4 mb-2">
+        <div class="card ${a.status==='ongoing'?'border-success':'border-secondary'}">
+          <div class="card-body">
+            <h5 class="card-title">拍卖 #${a.auction_id}</h5>
+            <p class="card-text">
+              电量: ${a.quantity} kWh <br>
+              最高价: ¥${a.highest_bid.toFixed(2)}<br>
+              状态: ${st}
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+    myAuctionsDiv.insertAdjacentHTML('beforeend', card);
+  });
+}
+
+// 初次加载
+loadMyAuctions();
+</script>
+</body>
+</html>
