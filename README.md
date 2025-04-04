@@ -19,6 +19,7 @@ This repository contains a modular, extensible framework for managing and optimi
     - [Use MQTT IoT Simulation](#use-mqtt-iot-simulation)
     - [The MQTT Data type](#the-mqtt-data-type)
   - [Testing](#testing)
+  - [Version](#version)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -114,7 +115,7 @@ This repository contains a modular, extensible framework for managing and optimi
     # install mqtt server on your computer
     https://mosquitto.org/download/
     # install mqtt client interface
-    https://mosquitto.org/download/
+    https://mqttx.app
     # connect the mqtt server with the setting, see image
     connection name: test
     subscription topic: energy_data
@@ -148,10 +149,51 @@ The repository includes basic tests to ensure that each component of the system 
 Ensure all tests pass before submitting any changes.
 
 ---
+## Version
+
+
+- **V0.1.0 – Initial Prototype**
+  - Basic system setup and agent instantiation.
+  - Implemented the Data Collection Agent.
+  - Established basic MQTT connectivity for sensor data.
+
+- **V0.2.0 – Enhanced Data Handling**
+  - Added initial data processing and event-listener mechanisms.
+  - Improved MQTT subscription logic.
+  - Fixed minor bugs in data retrieval and decoding.
+
+- **V0.3.0 – Forecasting & Prediction**
+  - Introduced the Prediction Agent for energy usage forecasting.
+  - Enhanced inter-agent communication using data queues.
+  - Updated documentation to reflect the new prediction workflows.
+
+- **V0.4.0 – Energy Management Integration**
+  - Integrated the Energy Management Agent for real-time decision making.
+  - Improved error handling, logging, and overall system stability.
+  - Added unit tests and integration tests for core functionalities.
+
+- **V0.5.0 – P2P Trading Functionality**
+  - Developed and integrated the P2P Trading Agent to manage energy buying/selling.
+  - Optimized data flows between agents for faster response.
+  - Refined system performance and enhanced user documentation.
+
+- **V1.0.0 – Official Release**
+  - Complete, production-ready system with all core features integrated.
+  - Comprehensive documentation and full test coverage.
+  - Robust automated deployment (CI/CD) and enhanced security features.
+  - Final performance optimizations and quality assurance measures in place.
+
+---
 
 ## Contributing
 
-TBD
+
+| Name       | GitHub Handle                                      | Branch      | Role / Contributions                                    |
+|------------|----------------------------------------------------|-------------|---------------------------------------------------------|
+| Weizhi Peng| [Miraclove](https://github.com/Miraclove)            | `main`  `develop`  | • System Integration, Data Collection Agent, Github Management, Documentation, Testing          |
+| Enjie Xie  | [KimJongUnReal](https://github.com/KimJongUnReal)    | `energy-consumption-prediction`      | • Energy Consumption Prediction Agent                    |
+| Chunlin    | [Chunlin417](https://github.com/Chunlin417)          | `Behavioral-and-Segmentation-Agent`| • Behavioral and Segmentation Agent                |
+| Zirui Wang | [SuMeng0272](https://github.com/SuMeng0272)          | `nagotiation-agent`        | • Nagotiation Agent        |
 
 ---
 
